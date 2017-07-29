@@ -1,16 +1,14 @@
 <template>
     <div>
-        <div v-cloak class="row">
-          <div class="movieInfo optionsBtns col s1">            
-          </div>
+        <div v-cloak class="row">          
           <div class="movieInfo col s5 center">
-            <img :src="image + movie.poster_path" alt="Poster" height="580"/>
+            <img class="responsive-img" :src="image + movie.poster_path" alt="Poster" width="400"/>
           </div>
           <div class="movieInfo col s6 center">
             <table>
               <tbody>
                 <tr>
-                  <td v-for="genre in movie.genre_ids" class="chip">{{ getGenres(genre) }}</td>
+                  <td v-for="genre in movie.genre_ids" v-bind:key="genre.id" class="chip">{{ getGenres(genre) }}</td>
                 </tr>
               </tbody>
             </table>           
@@ -67,7 +65,11 @@ export default {
       axios.get(discoverURL + random_gender + today)
         .then(function (response) {
           self.movie = response.data.results[random_number]; 
-          self.getTrailer(response.data.results[random_number].title);        
+          if (self.movie.overview.length > 0){
+            self.getTrailer(response.data.results[random_number].title); 
+          }else{
+            self.getRandomMovie();
+          }       
       }).catch( error => { console.log("error"); });   
     },   
     getTrailer: function(title) {
@@ -88,19 +90,13 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-  .movieinfo img {
-    max-width: 100%;
-    max-height: 100%;
-  }
-
+<style scoped> 
   .row {
-    margin-top: 5% !important;
+    margin-top: 5% !important; 
   }
 
-  .movieinfo img {
-    max-width: 100%;
-    max-height: 100%;
+  .responsive-img{
+    margin-left: 10%;
   }
 
 </style>
