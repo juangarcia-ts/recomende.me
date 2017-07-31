@@ -16,10 +16,11 @@
             <h6>{{movie.original_title}}</h6>
             <p class="flow-text">{{movie.overview}}</p>             
             <p class="flow-text"><b>Lançamento:</b> {{ formatDate(movie.release_date) }}</p>
-            <p class="flow-text"><b>Nota TMDB:</b> {{movie.vote_average}}</p>
-            <p class="flow-text"></p>
-            <p class="flow-text"></p>
-            <p class="flow-text"></p>
+            <p class="flow-text"><b>Elenco:</b>
+                <div v-cloak v-for="actor in cast.slice(0,3)" v-bind:key="actor.id">
+                  {{actor.name}}
+                </div>
+            </p>            
             <a v-on:click="getRandomMovie" onclick="Materialize.toast('Atualizado!', 2000)" class="waves-effect waves-light btn-large deep-purple">
               <i class="material-icons left">autorenew</i> Tentar novamente
             </a>
@@ -32,6 +33,8 @@
 </template>
 
 <script>
+const castURL = "https://api.themoviedb.org/3/movie/";
+const castURL2 = "/credits?api_key=01b947dec68cf8010c87b5551e2a67bc";
 const discoverURL = "https://api.themoviedb.org/3/discover/movie?api_key=01b947dec68cf8010c87b5551e2a67bc&language=pt-BR&sort_by=vote_average.desc&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=1990-01-01&with_original_language=en&with_genres=";
 const trailerURL = "https://www.googleapis.com/youtube/v3/search?part=id&key=AIzaSyAB9zZ1aCx2VQY_VrGdIpcQ30pwsOk_Up4&q=";
 const genres = {28: 'Ação', 12: 'Aventura', 35: 'Comédia', 18: 'Drama', 27: 'Terror', 10749: 'Romance',
@@ -43,10 +46,11 @@ export default {
   data: function () {
     return {  
       movie: [], 
-      trailer: '',
+      genres: [],      
       youtube: "https://www.youtube.com/watch?v=",
       image: "https://image.tmdb.org/t/p/w500",  
-      genres: [],
+      trailer: '',
+      cast: [],
     }
   },   
   beforeMount(){
@@ -66,7 +70,8 @@ export default {
         .then(function (response) {
           self.movie = response.data.results[random_number]; 
           if (self.movie.overview.length > 0){
-            self.getTrailer(response.data.results[random_number].title); 
+            self.getTrailer(response.data.results[random_number].title);
+            self.getCast(response.data.results[random_number].id);            
           }else{
             self.getRandomMovie();
           }       
@@ -82,6 +87,13 @@ export default {
     getGenres: function(movie_genre){      
       return genres[movie_genre];
     }, 
+    getCast: function(movie_id){
+      let self = this;
+
+      axios.get(castURL + movie_id + castURL2)
+        .then(response => {self.cast = response.data.cast
+      }).catch( error => { console.log(error); });
+    },
     formatDate: function (data) {
       return data.substring(5,7) + "/" + data.substring(0,4);
     }

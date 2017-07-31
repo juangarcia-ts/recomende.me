@@ -10,8 +10,8 @@
             <div v-cloak v-if="started == false">
               <h4 class="warning center">Insira um filme que você goste e encontre recomendações!</h4>
             </div>
-            <div v-cloak v-else-if="results.length <= 0 && started == true">          
-                <p v-cloak class="margin_left">Não há resultados compatíveis</p>
+            <div v-cloak v-else-if="results.length <= 0">          
+                <p class="margin_left">Não há resultados compatíveis</p>
             </div>
             <div v-cloak class="row" v-else>   
                 <span class="col s1"></span>         
@@ -52,12 +52,12 @@
             </div>
         </div>
         <div v-cloak v-else class="margin_left">          
-          <div v-if="relateds.length <= 0" class="center">
+          <div v-cloak v-if="relateds.length <= 0" class="center">
             <h3 class="sorry">Desculpe o transtorno</h3>
             <p class="flow-text">Não há recomendações para esse filme</p>
           </div>
-          <div v-else>
-            <div v-if="last_searched" class="center relateds_title">
+          <div v-cloak v-else>
+            <div v-cloak v-if="last_searched" class="center relateds_title">
               <h4>Relacionados a "{{ last_searched }}" 
                 <a class="show-hideBtn center-align waves-effect waves-light btn deep-purple" v-on:click="showRecomendations(showMore)">
                   <span v-if="showMore == false">Mostrar todos</span>
@@ -65,33 +65,38 @@
                 </a>
               </h4>              
             </div>
-            <div v-if="showMore == false">
-              <div class="row" v-for="(related, index) in relateds.slice(0,2)" v-bind:key="related.id">
+            <div v-cloak v-if="showMore == false">
+              <div v-cloak class="row" v-for="(related, key) in relateds.slice(0,2)" v-bind:key="related.id">
                 <img class="col s2 relatedMovie" :src="poster + related.poster_path" alt="Poster" height="200"/>
                 <div class="col s10">
-                  <h4>{{ related.title }} {{trailers.index}}</h4>
+                  <h4>{{ related.title }}</h4>
                   <h6>{{ related.original_title }}</h6>           
                   <p class="flow-text"><b>Lançamento:</b> {{ formatDate(related.release_date) }}</p>
-                  <p class="flow-text"><b>Nota TMDB:</b> {{related.vote_average}}</p>
-                  <a class="youtube waves-effect waves-light btn-large black" :href="youtube + trailers[index]">
-                  <i class="material-icons left">play_circle_outline</i> Assistir o trailer
+                  <p class="flow-text truncate"><b>Sinopse:</b> {{related.overview}}</p>
+                  <a id="player-trigger" class="youtube waves-effect waves-light btn-large black" v-on:click="showPlayer(trailers[key])">
+                    <i class="material-icons left">play_circle_outline</i> Assistir o trailer
                   </a>
                 </div>
               </div>
             </div>
-            <div v-else>
-              <div class="row" v-for="related in relateds" v-bind:key="related.id">
+            <div v-cloak v-else>
+              <div v-cloak class="row" v-for="(related, key) in relateds" v-bind:key="related.id">
                 <img class="col s2 relatedMovie" :src="poster + related.poster_path" alt="Poster" height="200"/>
                 <div class="col s10">
                   <h4>{{ related.title }} </h4>
                   <h6>{{ related.original_title }}</h6>           
                   <p class="flow-text"><b>Lançamento:</b> {{ formatDate(related.release_date) }}</p>
-                  <p class="flow-text"><b>Nota TMDB:</b> {{related.vote_average}}</p>
-                  <a class="youtube waves-effect waves-light btn-large black" :href="youtube + trailers[index]">
-                  <i class="material-icons left">play_circle_outline</i> Assistir o trailer
-                  </a>
+                  <p class="flow-text truncate"><b>Sinopse:</b> {{related.overview}}</p>
+                  <a id="player-trigger" class="youtube waves-effect waves-light btn-large black" v-on:click="showPlayer(trailers[key])">
+                      <i class="material-icons left">play_circle_outline</i> Assistir o trailer
+                  </a>                  
                 </div>
               </div>
+            </div>
+          </div>
+          <div id="youtube-player" class="YouTubePopUp-animation">
+            <div class="YouTubePopUp-Content">
+              <iframe class="embed-player" :src="youtube" allowfullscreen></iframe>
             </div>
           </div>
         </div>        
@@ -110,17 +115,17 @@ const genres = {28: 'Ação', 12: 'Aventura', 35: 'Comédia', 18: 'Drama', 27: '
 
 export default {  
   data: function () {
-    return {      
-      query: '',
+    return {
       results: [],
-      image: "https://image.tmdb.org/t/p/w92/",
-      poster: "https://image.tmdb.org/t/p/w154/",
-      started: false,
       relateds: [],
-      searched: false,
-      showMore: false,
-      youtube: "https://www.youtube.com/watch?v=",
       trailers: [],
+      image: "https://image.tmdb.org/t/p/w92/",
+      poster: "https://image.tmdb.org/t/p/w154/",      
+      started: false,      
+      searched: false,
+      showMore: false,  
+      youtube: '',    
+      query: '',
       last_searched: '',
     }
   },
@@ -130,7 +135,15 @@ export default {
       let self = this;  
      
       axios.get(searchURL + this.query)
-            .then(response => {self.results = response.data.results.slice(0,6)
+            .then(function (response)  {
+              self.results = [];
+              
+              for (let i = 0; i < response.data.results.length; i++){                 
+                if (response.data.results[i].poster_path != null){
+                  self.results = self.results.concat(response.data.results[i]);
+                }
+              }
+              self.results = self.results.slice(0,6)
       }).catch( error => { console.log(error); });
       
       this.started = true;
@@ -145,8 +158,7 @@ export default {
       
       axios.get(discoverURL + movie.id + discoverURL2)
             .then(function (response) {              
-              self.relateds = response.data.results;
-              console.log(self.relateds.length)               
+              self.relateds = response.data.results;                           
               for (let i = 0; i < self.relateds.length; i++){                            
                 self.getTrailer(self.relateds[i].title); 
               }
@@ -158,21 +170,31 @@ export default {
       let self = this;
 
       axios.get(trailerURL + title + "trailer")
-        .then(response => {self.trailers.concat(response.data.items[0].id.videoId);
+        .then(function (response) {          
+          self.trailers = self.trailers.concat(response.data.items[0].id.videoId);          
       }).catch( error => { console.log(error); });
       
     }, 
-    showRecomendations: function(state) {
-      console.log(state + "," + this.showMore);
+    showRecomendations: function(state) {      
       if (state == false){
         this.showMore = true;
+        $('html, body').animate({
+          scrollTop: $(".jumpTo").offset().top
+        }, 2000);
       }else{
         this.showMore = false;
       }
-      console.log(state + "," + this.showMore);
+      
+    },
+    showPlayer: function(URL){
+      this.youtube = "https://www.youtube.com/embed/" + URL + "?autoplay=1";
+
+      $("#youtube-player").addClass('YouTubePopUp-Wrap');
+      $("#youtube-player").show();
     }
   }
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -225,6 +247,10 @@ a{
 .show-hideBtn{
   margin-bottom: 1%;
   margin-left: 5%;
+}
+
+.youtube-player{
+  display: none;
 }
 
 </style>
