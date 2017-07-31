@@ -17,12 +17,12 @@
       <div class="movieInfo optionsBtns">
             <router-link class="btn-floating btn-large waves-effect waves-light deep-purple tooltipped" data-position="right" data-tooltip="Aleatório" to="/filmes/aleatorio"><i class="material-icons">shuffle</i></router-link>
             <router-link class="btn-floating btn-large waves-effect waves-light deep-purple tooltipped" data-position="right" data-tooltip="Recomendações" to="/filmes/descoberta"><i class="material-icons">sentiment_very_satisfied</i></router-link>
-            <router-link class="btn-floating btn-large waves-effect waves-light deep-purple tooltipped" data-position="right" data-tooltip="Busca avançada" to="/filmes/busca"><i class="material-icons">search</i></router-link>
+            <router-link class="jumpTo btn-floating btn-large waves-effect waves-light deep-purple tooltipped" data-position="right" data-tooltip="Busca avançada" to="/filmes/busca"><i class="material-icons">search</i></router-link>
       </div>
       <router-view></router-view>
     </main>
     <footer>
-      <a id="bottomBtn" class="jumpTo waves-effect waves-light btn-large btn-floating deep-purple modal-trigger pulse tooltipped" data-position="left" data-tooltip="Ajude-nos" href="#helper">
+      <a id="bottomBtn" class=" waves-effect waves-light btn-large btn-floating deep-purple modal-trigger pulse tooltipped" data-position="left" data-tooltip="Ajude-nos" href="#helper">
         <i class="material-icons">priority_high</i>
       </a>
       <div id="helper" class="modal center">
@@ -86,22 +86,22 @@ html, body {
   position: fixed;
   height: 60px !important;
   width: 60px !important;  
-  top: 45vh;
-  left: 2.5vw;
+  top: 45%;
+  left: 2.5%;
 }
 
 .optionsBtns a:first-child{
-  top: 35vh !important;
+  top: 35% !important;
 }
 
 .optionsBtns a:last-child{
-  top: 55vh !important;
+  top: 55% !important;
 }
 
 #bottomBtn{
   position: fixed;
-  right: 3vw;
-  bottom: 3vh;
+  right: 3%;
+  bottom: 3%;
 }
 
 .modal-content {

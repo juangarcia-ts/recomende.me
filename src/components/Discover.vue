@@ -8,10 +8,10 @@
         </div>
         <div v-cloak v-if="searched == false">
             <div v-cloak v-if="started == false">
-              <h4 class="warning center">Insira um filme que você goste e encontre recomendações!</h4>
+              <h3 class="warning center">Insira um filme que você goste e encontre recomendações!</h3>
             </div>
             <div v-cloak v-else-if="results.length <= 0">          
-                <p class="margin_left">Não há resultados compatíveis</p>
+              <h3 class="warning center">Não há resultados compatíveis</h3>
             </div>
             <div v-cloak class="row" v-else>   
                 <span class="col s1"></span>         
@@ -52,7 +52,7 @@
             </div>
         </div>
         <div v-cloak v-else class="margin_left">          
-          <div v-cloak v-if="relateds.length <= 0" class="center">
+          <div v-cloak v-if="relateds.length <= 0" class="warning center">
             <h3 class="sorry">Desculpe o transtorno</h3>
             <p class="flow-text">Não há recomendações para esse filme</p>
           </div>
@@ -237,7 +237,13 @@ a{
 }
 
 .warning{
-  margin-top: 20vh;
+  position: absolute;
+  top: 45% !important; 
+  max-width: 60%;
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;  
 }
 
 .relateds_title{

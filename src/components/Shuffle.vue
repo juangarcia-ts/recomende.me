@@ -1,10 +1,10 @@
 <template>
     <div>
         <div v-cloak class="row">          
-          <div class="movieInfo col s5 center">
+          <div class="movie-info col s11 m5 l5 center">
             <img class="responsive-img" :src="image + movie.poster_path" alt="Poster" width="400"/>
           </div>
-          <div class="movieInfo col s6 center">
+          <div class="movie-info col s12 m6 l6 center">
             <table>
               <tbody>
                 <tr>
@@ -109,6 +109,14 @@ export default {
 
   .responsive-img{
     margin-left: 10%;
+    max-height: 100%;
   }
+  
+  @media (max-width: 600px){
+    .responsive-img{
+      margin-bottom: 20%;
+    }
+  }
+  
 
 </style>
